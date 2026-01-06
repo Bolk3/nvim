@@ -5,6 +5,7 @@ return {
 	opts = function ()
 		require('catppuccin').setup({
 			flavour = "auto",
+			transparent_background = true,
 			background = {
 				light = "latte",
 				dark = "mocha"
