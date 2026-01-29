@@ -30,12 +30,21 @@ return {
 		appearance = {
 			-- 'mono' (default) for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
 			-- Adjusts spacing to ensure icons are aligned
-			nerd_font_variant = 'mono'
+			nerd_font_variant = 'mono',
 		},
 
 		-- (Default) Only show the documentation popup when manually triggered
 		completion = {
-			documentation = { auto_show = false },
+			menu = {
+				border = "rounded",
+				winhighlight = "Normal:BlinkCmpDoc,FloatBorder:BlinkCmpDocBorder,CursorLine:BlinkCmpDocCursorLine,Search:None",
+			},
+			documentation = { 
+				auto_show = true,
+				window = {
+					border = 'rounded'
+				}
+			},
 			list = {
 				selection = { preselect = false, auto_insert = false }
 			}
