@@ -10,4 +10,9 @@ return {
         ---@type dapview.Config
         opts = {},
     },
+    {
+        url = "https://codeberg.org/Jorenar/nvim-dap-disasm.git",
+        dependencies = "igorlfs/nvim-dap-view",
+        config = true,
+    },
 }
