@@ -1,9 +1,13 @@
+local env = require("config.env")
+env.load()
+
+local os_config_env = os.getenv("JDTLS_OS_CONFIG") or "linux"
+local max_heap  = os.getenv("JDTLS_MAX_HEAP")  or "4g"
 local function get_jdtls()
     local mason_path = vim.fn.stdpath("data") .. "/mason/packages"
     local jdtls_path = mason_path .. "/jdtls"
     local launcher = vim.fn.glob(jdtls_path .. "/plugins/org.eclipse.equinox.launcher_*.jar")
-    local os_config = "linux"
-
+    local os_config = os_config_env
     return {
         launcher = launcher,
         config_dir = jdtls_path .. "/config_" .. os_config,
@@ -19,16 +23,43 @@ end
 local function on_attach(_, bufnr)
     require("jdtls").setup_dap({ hotcodereplace = "auto" })
     require("jdtls.dap").setup_dap_main_class_configs()
-
     local opts = { buffer = bufnr, silent = true }
-    vim.keymap.set("n", "<leader>jo", require("jdtls").organize_imports, vim.tbl_extend("force", opts, { desc = "Organize imports" }))
-    vim.keymap.set("n", "<leader>jv", require("jdtls").extract_variable, vim.tbl_extend("force", opts, { desc = "Extract variable" }))
-    vim.keymap.set("n", "<leader>jc", require("jdtls").extract_constant, vim.tbl_extend("force", opts, { desc = "Extract constant" }))
-    vim.keymap.set("v", "<leader>jm", function() require("jdtls").extract_method(true) end, vim.tbl_extend("force", opts, { desc = "Extract method" }))
+    vim.keymap.set("n", "<leader>jo", require("jdtls").organize_imports,
+        vim.tbl_extend("force", opts, { desc = "Organize imports" }))
+    vim.keymap.set("n", "<leader>jv", require("jdtls").extract_variable,
+        vim.tbl_extend("force", opts, { desc = "Extract variable" }))
+    vim.keymap.set("n", "<leader>jc", require("jdtls").extract_constant,
+        vim.tbl_extend("force", opts, { desc = "Extract constant" }))
+    vim.keymap.set("v", "<leader>jm", function()
+        require("jdtls").extract_method(true)
+    end, vim.tbl_extend("force", opts, { desc = "Extract method" }))
 end
 
 local function start_jdtls()
     local jdtls = get_jdtls()
+
+    -- Guard: no project root = skip silently
+    local root_dir = vim.fs.root(0, {
+        "pom.xml",
+        "build.gradle",
+        "build.gradle.kts",
+        "mvnw",
+        "gradlew",
+        ".git",
+        ".project",
+        "src",
+    })
+
+    if not root_dir then
+        vim.notify("jdtls: aucun projet Java détecté, abandon.", vim.log.levels.WARN)
+        return
+    end
+
+    -- sourcePaths conditionnel : ne concaténer que si le dossier existe réellement
+    local source_paths = {}
+    if vim.fn.isdirectory(root_dir .. "/src") == 1 then
+        source_paths = { root_dir .. "/src" }
+    end
 
     local config = {
         cmd = {
@@ -38,7 +69,7 @@ local function start_jdtls()
             "-Declipse.product=org.eclipse.jdt.ls.core.product",
             "-Dlog.protocol=true",
             "-Dlog.level=ALL",
-            "-Xmx4g",
+            "-Xmx".. max_heap,
             "--add-modules=ALL-SYSTEM",
             "--add-opens", "java.base/java.util=ALL-UNNAMED",
             "--add-opens", "java.base/java.lang=ALL-UNNAMED",
@@ -46,16 +77,12 @@ local function start_jdtls()
             "-configuration", jdtls.config_dir,
             "-data", get_workspace(),
         },
-        root_dir = vim.fs.root(0, {
-            "pom.xml",
-            "build.gradle",
-            "build.gradle.kts",
-            ".git",
-            "mvnw",
-            "gradlew",
-        }),
+        root_dir = root_dir,
         settings = {
             java = {
+                project = {
+                    sourcePaths = source_paths,
+                },
                 eclipse = { downloadSources = true },
                 maven = { downloadSources = true },
                 implementationsCodeLens = { enabled = true },
@@ -81,7 +108,9 @@ local function start_jdtls()
                     },
                 },
                 codeGeneration = {
-                    toString = { template = "${object.className}{${member.name()}=${member.value}, ${otherMembers}}" },
+                    toString = {
+                        template = "${object.className}{${member.name()}=${member.value}, ${otherMembers}}",
+                    },
                     useBlocks = true,
                 },
             },
@@ -93,7 +122,6 @@ local function start_jdtls()
     require("jdtls").start_or_attach(config)
 end
 
--- Démarre jdtls à chaque fois qu'on ouvre un fichier Java
 vim.api.nvim_create_autocmd("FileType", {
     pattern = "java",
     callback = start_jdtls,

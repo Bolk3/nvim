@@ -19,11 +19,6 @@ return {
 
           -- ── koda ────────────────────────────────────────────────
           { name = "Koda Moss",               colorscheme = "koda-moss" },
-          {
-            name = "Koda Moss (transparent)",
-            colorscheme = "koda-moss",
-            before = [[require("koda").setup({ transparent = true })]],
-          },
 
           -- ── visual studio code ───────────────────────────────────
           { name = "VS Code",                 colorscheme = "visual_studio_code" },
@@ -61,9 +56,19 @@ return {
             before = [[require("catppuccin").setup({ flavour = "latte" })]],
           },
           {
+            name = "Catppuccin Latte (transparent)",
+            colorscheme = "catppuccin",
+            before = [[require("catppuccin").setup({ flavour = "latte", transparent_background = true })]],
+          },
+          {
             name = "Catppuccin Frappe",
             colorscheme = "catppuccin",
             before = [[require("catppuccin").setup({ flavour = "frappe" })]],
+          },
+          {
+            name = "Catppuccin Frappe (transparent)",
+            colorscheme = "catppuccin",
+            before = [[require("catppuccin").setup({ flavour = "frappe", transparent_background = true })]],
           },
           {
             name = "Catppuccin Macchiato",
@@ -71,9 +76,19 @@ return {
             before = [[require("catppuccin").setup({ flavour = "macchiato" })]],
           },
           {
+            name = "Catppuccin Macchiato (transparent)",
+            colorscheme = "catppuccin",
+            before = [[require("catppuccin").setup({ flavour = "macchiato", transparent_background = true })]],
+          },
+          {
             name = "Catppuccin Mocha",
             colorscheme = "catppuccin",
             before = [[require("catppuccin").setup({ flavour = "mocha" })]],
+          },
+          {
+            name = "Catppuccin Mocha (transparent)",
+            colorscheme = "catppuccin",
+            before = [[require("catppuccin").setup({ flavour = "mocha", transparent_background = true })]],
           },
 
           -- ── evergarden ───────────────────────────────────────────
@@ -88,12 +103,32 @@ return {
             ]],
           },
           {
+            name = "Evergarden Fall (transparent)",
+            colorscheme = "evergarden",
+            before = [[
+              require("evergarden").setup({
+                theme = { variant = "fall", accent = "green" },
+                editor = { transparent_background = true },
+              })
+            ]],
+          },
+          {
             name = "Evergarden Winter",
             colorscheme = "evergarden",
             before = [[
               require("evergarden").setup({
                 theme = { variant = "winter", accent = "green" },
                 editor = { transparent_background = false },
+              })
+            ]],
+          },
+          {
+            name = "Evergarden Winter (transparent)",
+            colorscheme = "evergarden",
+            before = [[
+              require("evergarden").setup({
+                theme = { variant = "winter", accent = "green" },
+                editor = { transparent_background = true },
               })
             ]],
           },
@@ -108,12 +143,32 @@ return {
             ]],
           },
           {
+            name = "Evergarden Spring (transparent)",
+            colorscheme = "evergarden",
+            before = [[
+              require("evergarden").setup({
+                theme = { variant = "spring", accent = "green" },
+                editor = { transparent_background = true },
+              })
+            ]],
+          },
+          {
             name = "Evergarden Summer",
             colorscheme = "evergarden",
             before = [[
               require("evergarden").setup({
                 theme = { variant = "summer", accent = "green" },
                 editor = { transparent_background = false },
+              })
+            ]],
+          },
+          {
+            name = "Evergarden Summer (transparent)",
+            colorscheme = "evergarden",
+            before = [[
+              require("evergarden").setup({
+                theme = { variant = "summer", accent = "green" },
+                editor = { transparent_background = true },
               })
             ]],
           },
